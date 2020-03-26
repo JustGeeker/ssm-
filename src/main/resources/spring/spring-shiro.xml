@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd"
+       default-lazy-init="false">
+
+    <!-- 安全认证过滤器 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager" />
+        <property name="loginUrl" value="index.jsp"/>
+        <property name="unauthorizedUrl" value="403.jsp"/>
+        <property name="filterChainDefinitions"> <!-- 拦截连接链-->
+            <value>
+                /index.jsp = anon
+                /insert = anon
+                /value = anon
+                /rolesOrrolesOr = rolesOr["root","admin"]
+                /roleAll = roles["root","admin"]
+                /* = authc
+            </value>
+        </property>
+        <property name="filters">
+            <util:map>
+                <entry key="rolesOr" value-ref="rolesOrFilter"/>
+            </util:map>
+        </property>
+    </bean>
+
+    <!--自定义shirofilter-->
+    <bean id="rolesOrFilter" class="com.just.myblog.shiro.CustomAuthorizationFilter"/>
+
+    <!-- 定义Shiro安全管理配置 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="realm" />
+        <property name="sessionManager" ref="sessionManager" />
+        <property name="cacheManager" ref="cacheManager" />
+        <property name="rememberMeManager" ref="rememberMeManager"/>
+    </bean>
+
+    <bean id="realm" class="com.just.myblog.shiro.UserRealm">
+        <!-- 配置缓存管理器-->
+        <property name="cachingEnabled" value="true"/>
+        <property name="authenticationCachingEnabled" value="true"/>
+        <property name="authorizationCachingEnabled" value="true"/>
+        <!-- 缓存管理器 -->
+        <property name="cacheManager" ref="cacheManager"/>
+        <!-- 配置加密器 -->
+        <property name="credentialsMatcher">
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <property name="hashAlgorithmName" value="MD5"></property> <!-- 加密算法的名称 -->
+                <property name="hashIterations" value="2"></property> <!-- 配置加密的次数 -->
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="sessionManager" class="com.just.myblog.shiro.RedisSessionManager">
+        <property name="sessionDAO" ref="redisSessionDao"/>
+    </bean>
+    <!-- 用户会话 操作 -->
+    <bean id="redisSessionDao" class="com.just.myblog.shiro.RedisSessionDao">
+        <property name="timeout" value="${redis.session.timeout}"/>
+    </bean>
+    <!-- 用户角色、权限缓存管理 -->
+    <bean id="cacheManager" class="com.just.myblog.shiro.RedisCacheManager">
+    </bean>
+
+    <!-- 记住我 -->
+    <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+        <property name="cookie" ref="simpleCookie"/>
+    </bean>
+    <bean id="simpleCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <property name="name" value="remeberMe"/>
+    </bean>
+
+
+</beans>

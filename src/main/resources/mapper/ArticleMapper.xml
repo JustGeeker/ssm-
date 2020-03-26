@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.just.myblog.dao.ArticleMapper" >
+  <resultMap id="BaseResultMap" type="com.just.myblog.domain.Article" >
+    <id column="oId" property="oid" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="abs" property="abs" jdbcType="VARCHAR" />
+    <result column="authorId" property="authorid" jdbcType="INTEGER" />
+    <result column="commentCount" property="commentcount" jdbcType="INTEGER" />
+    <result column="viewCount" property="viewcount" jdbcType="INTEGER" />
+    <result column="contents" property="contents" jdbcType="VARCHAR" />
+    <result column="hasPublished" property="haspublished" jdbcType="CHAR" />
+    <result column="isPublished" property="ispublished" jdbcType="CHAR" />
+    <result column="putTop" property="puttop" jdbcType="CHAR" />
+    <result column="created" property="created" jdbcType="BIGINT" />
+    <result column="updated" property="updated" jdbcType="BIGINT" />
+    <result column="randomDouble" property="randomdouble" jdbcType="DOUBLE" />
+    <result column="commentable" property="commentable" jdbcType="CHAR" />
+    <result column="imgName" property="imgname" jdbcType="VARCHAR" />
+  </resultMap>
+  <cache type="com.just.myblog.config.RedisCache" />
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    oId, title, abs, authorId, commentCount, viewCount, contents, hasPublished, isPublished, 
+    putTop, created, updated, randomDouble, commentable, imgName
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.just.myblog.domain.ArticleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from article
+    where oId = #{oid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from article
+    where oId = #{oid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.just.myblog.domain.ArticleExample" >
+    delete from article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.just.myblog.domain.Article" flushCache="true">
+    insert into article (oId, title, abs, 
+      authorId, commentCount, viewCount, 
+      contents, hasPublished, isPublished, 
+      putTop, created, updated, 
+      randomDouble, commentable, imgName
+      )
+    values (#{oid,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{abs,jdbcType=VARCHAR}, 
+      #{authorid,jdbcType=INTEGER}, #{commentcount,jdbcType=INTEGER}, #{viewcount,jdbcType=INTEGER}, 
+      #{contents,jdbcType=VARCHAR}, #{haspublished,jdbcType=CHAR}, #{ispublished,jdbcType=CHAR}, 
+      #{puttop,jdbcType=CHAR}, #{created,jdbcType=BIGINT}, #{updated,jdbcType=BIGINT}, 
+      #{randomdouble,jdbcType=DOUBLE}, #{commentable,jdbcType=CHAR}, #{imgname,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.just.myblog.domain.Article" >
+    insert into article
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="oid != null" >
+        oId,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="abs != null" >
+        abs,
+      </if>
+      <if test="authorid != null" >
+        authorId,
+      </if>
+      <if test="commentcount != null" >
+        commentCount,
+      </if>
+      <if test="viewcount != null" >
+        viewCount,
+      </if>
+      <if test="contents != null" >
+        contents,
+      </if>
+      <if test="haspublished != null" >
+        hasPublished,
+      </if>
+      <if test="ispublished != null" >
+        isPublished,
+      </if>
+      <if test="puttop != null" >
+        putTop,
+      </if>
+      <if test="created != null" >
+        created,
+      </if>
+      <if test="updated != null" >
+        updated,
+      </if>
+      <if test="randomdouble != null" >
+        randomDouble,
+      </if>
+      <if test="commentable != null" >
+        commentable,
+      </if>
+      <if test="imgname != null" >
+        imgName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="oid != null" >
+        #{oid,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="abs != null" >
+        #{abs,jdbcType=VARCHAR},
+      </if>
+      <if test="authorid != null" >
+        #{authorid,jdbcType=INTEGER},
+      </if>
+      <if test="commentcount != null" >
+        #{commentcount,jdbcType=INTEGER},
+      </if>
+      <if test="viewcount != null" >
+        #{viewcount,jdbcType=INTEGER},
+      </if>
+      <if test="contents != null" >
+        #{contents,jdbcType=VARCHAR},
+      </if>
+      <if test="haspublished != null" >
+        #{haspublished,jdbcType=CHAR},
+      </if>
+      <if test="ispublished != null" >
+        #{ispublished,jdbcType=CHAR},
+      </if>
+      <if test="puttop != null" >
+        #{puttop,jdbcType=CHAR},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=BIGINT},
+      </if>
+      <if test="updated != null" >
+        #{updated,jdbcType=BIGINT},
+      </if>
+      <if test="randomdouble != null" >
+        #{randomdouble,jdbcType=DOUBLE},
+      </if>
+      <if test="commentable != null" >
+        #{commentable,jdbcType=CHAR},
+      </if>
+      <if test="imgname != null" >
+        #{imgname,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.just.myblog.domain.ArticleExample" resultType="java.lang.Integer" >
+    select count(*) from article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update article
+    <set >
+      <if test="record.oid != null" >
+        oId = #{record.oid,jdbcType=INTEGER},
+      </if>
+      <if test="record.title != null" >
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.abs != null" >
+        abs = #{record.abs,jdbcType=VARCHAR},
+      </if>
+      <if test="record.authorid != null" >
+        authorId = #{record.authorid,jdbcType=INTEGER},
+      </if>
+      <if test="record.commentcount != null" >
+        commentCount = #{record.commentcount,jdbcType=INTEGER},
+      </if>
+      <if test="record.viewcount != null" >
+        viewCount = #{record.viewcount,jdbcType=INTEGER},
+      </if>
+      <if test="record.contents != null" >
+        contents = #{record.contents,jdbcType=VARCHAR},
+      </if>
+      <if test="record.haspublished != null" >
+        hasPublished = #{record.haspublished,jdbcType=CHAR},
+      </if>
+      <if test="record.ispublished != null" >
+        isPublished = #{record.ispublished,jdbcType=CHAR},
+      </if>
+      <if test="record.puttop != null" >
+        putTop = #{record.puttop,jdbcType=CHAR},
+      </if>
+      <if test="record.created != null" >
+        created = #{record.created,jdbcType=BIGINT},
+      </if>
+      <if test="record.updated != null" >
+        updated = #{record.updated,jdbcType=BIGINT},
+      </if>
+      <if test="record.randomdouble != null" >
+        randomDouble = #{record.randomdouble,jdbcType=DOUBLE},
+      </if>
+      <if test="record.commentable != null" >
+        commentable = #{record.commentable,jdbcType=CHAR},
+      </if>
+      <if test="record.imgname != null" >
+        imgName = #{record.imgname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update article
+    set oId = #{record.oid,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      abs = #{record.abs,jdbcType=VARCHAR},
+      authorId = #{record.authorid,jdbcType=INTEGER},
+      commentCount = #{record.commentcount,jdbcType=INTEGER},
+      viewCount = #{record.viewcount,jdbcType=INTEGER},
+      contents = #{record.contents,jdbcType=VARCHAR},
+      hasPublished = #{record.haspublished,jdbcType=CHAR},
+      isPublished = #{record.ispublished,jdbcType=CHAR},
+      putTop = #{record.puttop,jdbcType=CHAR},
+      created = #{record.created,jdbcType=BIGINT},
+      updated = #{record.updated,jdbcType=BIGINT},
+      randomDouble = #{record.randomdouble,jdbcType=DOUBLE},
+      commentable = #{record.commentable,jdbcType=CHAR},
+      imgName = #{record.imgname,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.just.myblog.domain.Article" >
+    update article
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="abs != null" >
+        abs = #{abs,jdbcType=VARCHAR},
+      </if>
+      <if test="authorid != null" >
+        authorId = #{authorid,jdbcType=INTEGER},
+      </if>
+      <if test="commentcount != null" >
+        commentCount = #{commentcount,jdbcType=INTEGER},
+      </if>
+      <if test="viewcount != null" >
+        viewCount = #{viewcount,jdbcType=INTEGER},
+      </if>
+      <if test="contents != null" >
+        contents = #{contents,jdbcType=VARCHAR},
+      </if>
+      <if test="haspublished != null" >
+        hasPublished = #{haspublished,jdbcType=CHAR},
+      </if>
+      <if test="ispublished != null" >
+        isPublished = #{ispublished,jdbcType=CHAR},
+      </if>
+      <if test="puttop != null" >
+        putTop = #{puttop,jdbcType=CHAR},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=BIGINT},
+      </if>
+      <if test="updated != null" >
+        updated = #{updated,jdbcType=BIGINT},
+      </if>
+      <if test="randomdouble != null" >
+        randomDouble = #{randomdouble,jdbcType=DOUBLE},
+      </if>
+      <if test="commentable != null" >
+        commentable = #{commentable,jdbcType=CHAR},
+      </if>
+      <if test="imgname != null" >
+        imgName = #{imgname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where oId = #{oid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.just.myblog.domain.Article" >
+    update article
+    set title = #{title,jdbcType=VARCHAR},
+      abs = #{abs,jdbcType=VARCHAR},
+      authorId = #{authorid,jdbcType=INTEGER},
+      commentCount = #{commentcount,jdbcType=INTEGER},
+      viewCount = #{viewcount,jdbcType=INTEGER},
+      contents = #{contents,jdbcType=VARCHAR},
+      hasPublished = #{haspublished,jdbcType=CHAR},
+      isPublished = #{ispublished,jdbcType=CHAR},
+      putTop = #{puttop,jdbcType=CHAR},
+      created = #{created,jdbcType=BIGINT},
+      updated = #{updated,jdbcType=BIGINT},
+      randomDouble = #{randomdouble,jdbcType=DOUBLE},
+      commentable = #{commentable,jdbcType=CHAR},
+      imgName = #{imgname,jdbcType=VARCHAR}
+    where oId = #{oid,jdbcType=INTEGER}
+  </update>
+</mapper>

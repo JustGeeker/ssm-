@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.just.myblog.dao.SmartArticleMapper" >
+  <resultMap id="BaseResultMap" type="com.just.myblog.domain.SmartArticle" >
+    <id column="oid" property="oid" jdbcType="INTEGER" />
+    <result column="articleId" property="articleid" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="articleRandomDouble" property="articlerandomdouble" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.just.myblog.domain.SmartArticle" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    oid, articleId, title, articleRandomDouble
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.just.myblog.domain.SmartArticleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from smart_article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.just.myblog.domain.SmartArticleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from smart_article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from smart_article
+    where oid = #{oid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from smart_article
+    where oid = #{oid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.just.myblog.domain.SmartArticleExample" >
+    delete from smart_article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.just.myblog.domain.SmartArticle" >
+    insert into smart_article (oid, articleId, title, 
+      articleRandomDouble, content)
+    values (#{oid,jdbcType=INTEGER}, #{articleid,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{articlerandomdouble,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.just.myblog.domain.SmartArticle" >
+    insert into smart_article
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="oid != null" >
+        oid,
+      </if>
+      <if test="articleid != null" >
+        articleId,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="articlerandomdouble != null" >
+        articleRandomDouble,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="oid != null" >
+        #{oid,jdbcType=INTEGER},
+      </if>
+      <if test="articleid != null" >
+        #{articleid,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="articlerandomdouble != null" >
+        #{articlerandomdouble,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.just.myblog.domain.SmartArticleExample" resultType="java.lang.Integer" >
+    select count(*) from smart_article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update smart_article
+    <set >
+      <if test="record.oid != null" >
+        oid = #{record.oid,jdbcType=INTEGER},
+      </if>
+      <if test="record.articleid != null" >
+        articleId = #{record.articleid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.title != null" >
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.articlerandomdouble != null" >
+        articleRandomDouble = #{record.articlerandomdouble,jdbcType=INTEGER},
+      </if>
+      <if test="record.content != null" >
+        content = #{record.content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update smart_article
+    set oid = #{record.oid,jdbcType=INTEGER},
+      articleId = #{record.articleid,jdbcType=VARCHAR},
+      title = #{record.title,jdbcType=VARCHAR},
+      articleRandomDouble = #{record.articlerandomdouble,jdbcType=INTEGER},
+      content = #{record.content,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update smart_article
+    set oid = #{record.oid,jdbcType=INTEGER},
+      articleId = #{record.articleid,jdbcType=VARCHAR},
+      title = #{record.title,jdbcType=VARCHAR},
+      articleRandomDouble = #{record.articlerandomdouble,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.just.myblog.domain.SmartArticle" >
+    update smart_article
+    <set >
+      <if test="articleid != null" >
+        articleId = #{articleid,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="articlerandomdouble != null" >
+        articleRandomDouble = #{articlerandomdouble,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where oid = #{oid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.just.myblog.domain.SmartArticle" >
+    update smart_article
+    set articleId = #{articleid,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      articleRandomDouble = #{articlerandomdouble,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where oid = #{oid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.just.myblog.domain.SmartArticle" >
+    update smart_article
+    set articleId = #{articleid,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      articleRandomDouble = #{articlerandomdouble,jdbcType=INTEGER}
+    where oid = #{oid,jdbcType=INTEGER}
+  </update>
+</mapper>
